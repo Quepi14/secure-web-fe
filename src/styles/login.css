@@ -1,0 +1,126 @@
+.login-container {
+  display: flex;
+  height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.login-left {
+  flex: 1;
+  background-color: #05009E;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.login-left h1 {
+  font-size: 48px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.login-left h2 {
+  font-size: 32px;
+  margin: 5px 0;
+}
+
+.login-left h3 {
+  font-size: 20px;
+  margin: 10px 0 0;
+}
+
+.login-right {
+  flex: 1;
+  background-color: #dedede;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 60px;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.login-right h3 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+form label {
+  font-weight: bold;
+}
+
+form input[type="text"],
+form input[type="password"] {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+  box-sizing: border-box;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+  background: none;
+  border: none;
+  outline: none;
+  user-select: none;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+form button[type="submit"] {
+  padding: 12px;
+  border: 1px solid #000;
+  background-color: white;
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+form button[type="submit"]:hover {
+  background-color: #eee;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  padding: 10px;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+  border-radius: 5px;
+  font-size: 14px;
+  text-align: center;
+}
