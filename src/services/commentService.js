@@ -9,10 +9,15 @@ export const deleteComment = async (id) => api.delete(`/comments/${id}`)
 
 export const fetchComments = async () => api.get('/comments')
 
-export const submitComment = async (FormData) => {
-    return api.post('/comments', FormData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    })
-}
+export const submitComment = async (formData) => {
+  try {
+    const response = await api.post('/comments', formData);
+    return { success: true, data: response.data };
+  } catch (err) {
+    console.error('Submit Comment Error:', err);
+    return {
+      success: false,
+      message: err?.response?.data?.message || 'Terjadi kesalahan saat mengirim komentar',
+    };
+  }
+};

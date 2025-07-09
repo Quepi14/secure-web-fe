@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/App.css';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { checkAuth, login, logout } from '../services/authService';
+import { checkAuth, logout } from '../services/authService';
 import { fetchComments, submitComment } from '../services/commentService';
 import Navbar from '../components/navbar';
 import CommentCard from '../components/commentCard';
@@ -51,18 +51,22 @@ function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const formDataToSend = new FormData();
     formDataToSend.append('comment', comment);
     if (file) formDataToSend.append('image', file);
 
     const res = await submitComment(formDataToSend);
-    if (res.success) {
+    console.log('submitCOmment reuslt:', res);
+    
+
+    if (res?.success) {
       alert(res.data.message);
       setComment('');
       setFile(null);
       loadComments();
     } else {
-      alert(res.message);
+      alert(res?.message || 'Gagal mengirim komentar');
       console.error(res.message);
     }
   };

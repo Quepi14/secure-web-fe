@@ -2,7 +2,7 @@ import API from '../utils/api';
 
 export const register = async (data) => {
     try {
-        const res = await API.post('/secure-app/auth/register', data);
+        const res = await API.post('/auth/register', data);
         return res.data;
     } catch (error) {
         console.error('register error:', error.response?.data || error.message);
@@ -13,42 +13,33 @@ export const register = async (data) => {
     }
 };
 
-export const login = async (credentials) => {
+export const login = async ({username, password}) => {
     try {
-        const res = await API.post('/secure-app/auth/login', credentials);
+        const res = await API.post('/auth/login', {username, password});
+
+        if(res.data.token){
+            localStorage.setItem('token', res.data.token);
+        }
         return res.data;
-    } catch (error) {
-        console.error('checkAuth error:', error.response?.data || error.message);
-        return {
-            success: false,
-            loggedI: false
-        };
+    } catch (err) {
+        return{ succes:false, message: err.response?.data?.message || 'Login failed'};
     }
 };
 
 export const checkAuth = async () => {
     try {
-        const res = await API.get('/secure-app/auth/check');
-        return res.data;
-    } catch (error) {
-        console.error('checkAuth error:', error.response?.data || error.message);
+        const res = await API.get('/auth/check');
+        return { loggedIn: true, user: res.data.user };
+    } catch (err) {
+        console.error('checkAuth error:', err.response?.data || err.message);
         return {
-            success: false,
             loggedIn: false
         };
     }
 };
 
 export const logout = async () => {
-    try {
-        const res = await API.get('/secure-app/auth/logout');
-        return res.data;
-    } catch (error) {
-        console.error('logout error:', error.response?.data || error.message);
-        return {
-            success: false,
-            message: 'Logout failed'
-        };
-    }
+    localStorage.removeItem('token');
+    await API.post('/auth/logout');
 };
 
