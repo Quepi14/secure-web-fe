@@ -1,23 +1,36 @@
 import api from '../utils/api';
 
-export const getAllComments = async () => api.get('/comments')
+export const getAllComments = async () => api.get('/comments');
 
-export const updateComment = async (id, data) => api.put(`/comments/${id}`, data) 
+export const fetchComments = async () => api.get('/comments');
 
-export const deleteComment = async (id) => api.delete(`/comments/${id}`)
+export const updateComment = async (id, formData) =>
+  api.put(`/comments/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
 
-
-export const fetchComments = async () => api.get('/comments')
+export const deleteComment = async (id) => api.delete(`/comments/${id}`);
 
 export const submitComment = async (formData) => {
   try {
-    const response = await api.post('/comments', formData);
-    return { success: true, data: response.data };
+    const response = await api.post('/comment', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return {
+      success: response.data.success,
+      data: response.data.data,
+      message: response.data.message,
+    };
   } catch (err) {
     console.error('Submit Comment Error:', err);
     return {
       success: false,
-      message: err?.response?.data?.message || 'Terjadi kesalahan saat mengirim komentar',
+      message:
+        err?.response?.data?.message ||
+        'Terjadi kesalahan saat mengirim komentar',
     };
   }
 };

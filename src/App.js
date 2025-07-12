@@ -3,6 +3,7 @@ import Register from './pages/register';
 import Login from './pages/login';
 import Home from './pages/home';
 import Dashboard from './pages/dashboard';
+import LogPage from './pages/adminLog'; // Ganti 'logs' menjadi 'LogPage'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/logs" element={<LogPage />} /> 
       </Routes>
     </Router>
   );
