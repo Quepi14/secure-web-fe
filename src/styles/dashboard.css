@@ -111,6 +111,7 @@
   background-color: #fff;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   position: relative;
+  text-align: center;
 }
 
 .comment-header {
@@ -128,6 +129,11 @@
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 10px;
+}
+
+.comment-actions {
+  display: flex;
+  justify-content: center;
 }
 
 .delete-button {

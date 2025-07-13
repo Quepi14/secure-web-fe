@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Container, Table } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/logs.css';
 
@@ -17,7 +17,7 @@ const AdminLogs = () => {
     }
 
     fetchLogs();
-  }, []);
+  }, [navigate]);
 
   const fetchLogs = async () => {
     try {

@@ -12,8 +12,7 @@ function Login() {
     password: ''
   });
 
-  const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsloading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
@@ -32,30 +31,24 @@ function Login() {
       return;
     }
 
-    setIsloading(true);
+    setIsLoading(true);
 
     try {
       const result = await login(inputs);
 
-      if(result?.success && result?.user){
-        const storage = rememberMe ? localStorage : sessionStorage
-        const { user, token } = result;
-
-        storage.setItem('user', JSON.stringify(user));
-        if(token) storage.setItem('token', token);
-
-        if(user.role === 'admin') {
+      if (result?.success && result?.user) {
+        if (result.user.role === 'admin') {
           navigate('/dashboard');
-        }else {
+        } else {
           navigate('/');
         }
-      }else{
-        setError(result?.message || 'Login gagal')
+      } else {
+        setError(result?.message || 'Login gagal');
       }
-    }catch (err) {
-      setError('Error Server')
-    }finally {
-      setIsloading(false);
+    } catch (err) {
+      setError('Error Server');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -86,16 +79,6 @@ function Login() {
             onChange={handleChange}
             disabled={isLoading}
           />
-
-          <div className="remember">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              id="rememberMe"
-            />
-            <label htmlFor="rememberMe">Remember Me</label>
-          </div>
 
           <button type="submit" disabled={isLoading}>
             {isLoading ? 'Memproses...' : 'Submit'}

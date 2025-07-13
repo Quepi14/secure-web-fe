@@ -3,55 +3,64 @@ import '../styles/App.css';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { checkAuth, logout } from '../services/authService';
-import { fetchComments, submitComment } from '../services/commentService';
+import { fetchComments, submitComment, updateComment, deleteComment } from '../services/commentService';
 import Navbar from '../components/navbar';
 import CommentCard from '../components/commentCard';
-import { updateComment, deleteComment} from '../services/commentService'
+import ImagePreview from '../components/imagePreview'; // ini tetap file 'imagePreview.jsx'
 
 function Home() {
   const [user, setUser] = useState(null);
   const [comment, setComment] = useState('');
   const [file, setFile] = useState(null);
   const [comments, setComments] = useState([]);
-  const [editingComment, setEditingComment] = useState(null)
+  const [editingComment, setEditingComment] = useState(null);
+  const [updateImagePreview, setUpdateImagePreview] = useState('');
+  const [oldImage, setOldImage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-  const fetchData = async () => {
+    const fetchData = async () => {
+      try {
+        const authData = await checkAuth();
+        if (authData.loggedIn) {
+          setUser(authData.user);
+        } else {
+          setUser(null);
+        }
+
+        const commentsRes = await fetchComments();
+        if (commentsRes.data?.success) {
+          setComments(commentsRes.data.data);
+        } else {
+          console.warn('Tidak ada komentar berhasil diambil');
+        }
+      } catch (error) {
+        console.error('Gagal memuat data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const loadComments = async () => {
     try {
-      const authData = await checkAuth();
-      if (authData.loggedIn) {
-        setUser(authData.user);
-      } else {
-        setUser(null);
-      }
-
       const commentsRes = await fetchComments();
-      console.log('commentsRes:', commentsRes);
-
       if (commentsRes.data?.success) {
-        setComments(commentsRes.data.data); 
+        setComments(commentsRes.data.data);
       } else {
-        console.warn('Tidak ada komentar berhasil diambil');
+        console.warn('Gagal mengambil komentar saat refresh');
       }
-    } catch (error) {
-      console.error('Gagal memuat data:', error);
+    } catch (err) {
+      console.error('Error loadComments:', err);
     }
-  };
-
-  fetchData(); 
-}, []);
-
-  const loadComments = () => {
-    fetchComments().then(res => {
-      if (res.success) setComments(res.data);
-    });
   };
 
   const handleEdit = (comment) => {
     setComment(comment.comment);
     setFile(null);
     setEditingComment(comment);
+    setUpdateImagePreview(comment.image);
+    setOldImage(comment.image);
   };
 
   const handleUpdate = async (e) => {
@@ -63,6 +72,8 @@ function Home() {
       formData.append('comment', comment);
       if (file) {
         formData.append('image', file);
+      } else {
+        formData.append('oldImage', oldImage);
       }
 
       const response = await updateComment(editingComment.id, formData);
@@ -101,22 +112,26 @@ function Home() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formDataToSend = new FormData();
-    formDataToSend.append('comment', comment);
-    if (file) formDataToSend.append('image', file);
+    const formData = new FormData();
+    formData.append('comment', comment);
+    if (file) {
+      formData.append('image', file);
+    }
 
-    const res = await submitComment(formDataToSend);
-    console.log('submitCOmment reuslt:', res);
-    
+    const response = await submitComment(formData);
 
-    if (res?.success) {
-      alert(res.data.message);
+    if (!response) {
+      alert('Tidak ada respon dari server.');
+      return;
+    }
+
+    if (response.success) {
+      alert(response.message || 'Komentar berhasil dikirim!');
       setComment('');
       setFile(null);
       loadComments();
     } else {
-      alert(res?.message || 'Gagal mengirim komentar');
-      console.error(res.message);
+      alert(response.message || 'Gagal mengirim komentar');
     }
   };
 
@@ -131,8 +146,6 @@ function Home() {
       });
   };
 
-
- 
   return (
     <div className="custom-container" style={{ paddingBottom: '100px' }}>
       <Navbar user={user} handleLogout={handleLogout} />
@@ -176,8 +189,24 @@ function Home() {
             />
           </div>
 
+          {/* Preview Gambar Baru */}
+          <ImagePreview file={file} />
+
+          {/* Preview Gambar Lama saat Edit */}
+          {editingComment && updateImagePreview && !file && (
+            <div className="mb-3">
+              <label className='form-label'>Gambar saat ini:</label><br />
+              <img
+                src={`http://localhost:3300/uploads/${updateImagePreview}`}
+                alt='Gambar saat ini'
+                className="img-thumbnail"
+                style={{ maxWidth: '200px' }}
+              />
+            </div>
+          )}
+
           <button type="submit" className='btn btn-warning fw-bold w-100'>
-            {editingComment? 'Update komentar' : 'Submit'}
+            {editingComment ? 'Update komentar' : 'Submit'}
           </button>
         </form>
       </div>
@@ -187,13 +216,13 @@ function Home() {
         <h4 className="fw-bold">Komentar Terbaru</h4>
         {comments.length > 0 ? (
           <div className="d-flex flex-row flex-wrap gap-3 mt-3">
-            {comments.map((item, index) => (
+            {comments.map(comment => (
               <CommentCard
-                key={index}
-                comment={item}
+                key={comment.id}
+                comment={comment}
                 currentUser={user}
-                onEdit={() => handleEdit(item)}
-                onDelete={() => handleDelete(item.id)}
+                onEdit={() => handleEdit(comment)}
+                onDelete={() => handleDelete(comment.id)}
               />
             ))}
           </div>

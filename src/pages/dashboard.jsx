@@ -21,10 +21,10 @@ const DashboardAdmin = () => {
   const fetchComments = async () => {
     try {
       const response = await getAllComments();
-      if(response?.data?.success && Array.isArray(response.data.data)){
-        setComments(response.data.data)
-      }else{
-        setComments([])
+      if (response?.data?.success && Array.isArray(response.data.data)) {
+        setComments(response.data.data);
+      } else {
+        setComments([]);
       }
     } catch (error) {
       console.error("Gagal mengambil komentar:", error);
@@ -32,6 +32,8 @@ const DashboardAdmin = () => {
   };
 
   const handleDelete = async (id) => {
+    if (!window.confirm("Yakin ingin menghapus komentar ini?")) return;
+
     try {
       await deleteComment(id);
       fetchComments();
@@ -73,23 +75,23 @@ const DashboardAdmin = () => {
           <div className="comments-grid">
             {comments.map((comment) => (
               <div className="comment-card" key={comment.id}>
-                <div className="comment-header">
-                  <strong>{comment.username}</strong>
-                </div>
+                <div className="comment-header">{comment.username}</div>
                 <div className="comment-body">{comment.comment}</div>
                 {comment.image && (
                   <img
                     src={`http://localhost:3300/uploads/${comment.image}`}
                     alt="Komentar"
-                    className= "comment-image"
+                    className="comment-image"
                   />
                 )}
-                <button
-                  className="delete-button"
-                  onClick={() => handleDelete(comment.id)}
-                >
-                  Hapus
-                </button>
+                <div className="comment-actions">
+                  <button
+                    className="delete-button"
+                    onClick={() => handleDelete(comment.id)}
+                  >
+                    Hapus
+                  </button>
+                </div>
               </div>
             ))}
           </div>

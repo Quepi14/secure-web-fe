@@ -13,16 +13,16 @@ export const deleteComment = async (id) => api.delete(`/comments/${id}`);
 
 export const submitComment = async (formData) => {
   try {
-    const response = await api.post('/comment', formData, {
+    const response = await api.post('/comments', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
 
     return {
-      success: response.data.success,
-      data: response.data.data,
-      message: response.data.message,
+      success: response.data?.success ?? true,
+      data: response.data?.data,
+      message: response.data?.message || 'Komentar berhasil dikirim!',
     };
   } catch (err) {
     console.error('Submit Comment Error:', err);
@@ -34,3 +34,4 @@ export const submitComment = async (formData) => {
     };
   }
 };
+
