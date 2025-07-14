@@ -75,14 +75,20 @@ const DashboardAdmin = () => {
           <div className="comments-grid">
             {comments.map((comment) => (
               <div className="comment-card" key={comment.id}>
-                <div className="comment-header">{comment.username}</div>
-                <div className="comment-body">{comment.comment}</div>
+                <div className="comment-header">
+                  <strong>{comment.username}</strong>
+                </div>
+                <div className="comment-body">
+                  {comment.comment}
+                </div>
                 {comment.image && (
-                  <img
-                    src={`http://localhost:3300/uploads/${comment.image}`}
-                    alt="Komentar"
-                    className="comment-image"
-                  />
+                  <div className="comment-image-wrapper">
+                    <img
+                      src={`http://localhost:3300/uploads/${comment.image}`}
+                      alt="Komentar"
+                      className="comment-image"
+                    />
+                  </div>
                 )}
                 <div className="comment-actions">
                   <button

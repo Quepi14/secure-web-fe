@@ -19,9 +19,14 @@ export const login = async ({ username, password }) => {
     const { token, user } = res.data;
 
     // Simpan token dan user di localStorage
-    if (token) {
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+    if (token && user) {
+      if( user.role === 'admin'){
+        localStorage.setItem('adminToken')
+        localStorage.setItem('adminUser', JSON.stringify(user))
+      }else{
+        localStorage.setItem('token', token)
+        localStorage.setItem('user', JSON.stringify(user))
+      }
     }
 
     return res.data;

@@ -26,7 +26,19 @@ const AdminLogs = () => {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
-      setLogs(response.data.logs || []);
+
+      const allLogs = response.data.logs || [];
+
+      console.log("Semua log dari server:", allLogs);
+
+      // Pakai log.action (bukan log.aksi)
+      const filteredLogs = allLogs.filter(log => {
+        const action = log.action?.trim().toUpperCase(); 
+        return !action.includes('_BACKUP');
+      });
+
+      setLogs(filteredLogs);
+
     } catch (error) {
       console.error('Error fetching logs:', error);
     }
