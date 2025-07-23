@@ -36,12 +36,18 @@ function Login() {
     try {
       const result = await login(inputs);
 
-      if (result?.success && result?.user) {
+      if (result?.success && result?.user && result?.token) {
+        localStorage.setItem("user", JSON.stringify(result.user));
+
         if (result.user.role === 'admin') {
+          localStorage.setItem("adminToken", result.token);
           navigate('/dashboard');
         } else {
+          localStorage.setItem("token", result.token);
           navigate('/');
         }
+
+        console.log("Login berhasil sebagai:", result.user.role);
       } else {
         setError(result?.message || 'Login gagal');
       }
@@ -51,6 +57,7 @@ function Login() {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="login-container">

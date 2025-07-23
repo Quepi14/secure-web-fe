@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Table } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/logs.css';
+import api from '../utils/api'; 
 
 const AdminLogs = () => {
   const [logs, setLogs] = useState([]);
@@ -21,24 +21,17 @@ const AdminLogs = () => {
 
   const fetchLogs = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3300/secure-app/admin/logs', {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
+      const response = await api.get('/admin/logs'); 
 
       const allLogs = response.data.logs || [];
-
       console.log("Semua log dari server:", allLogs);
 
-      // Pakai log.action (bukan log.aksi)
       const filteredLogs = allLogs.filter(log => {
-        const action = log.action?.trim().toUpperCase(); 
+        const action = log.action?.trim().toUpperCase();
         return !action.includes('_BACKUP');
       });
 
       setLogs(filteredLogs);
-
     } catch (error) {
       console.error('Error fetching logs:', error);
     }
@@ -46,7 +39,6 @@ const AdminLogs = () => {
 
   return (
     <div className="dashboard-wrapper">
-      {/* 🔵 Floating Navbar */}
       <div className="navbar-floating">
         <div className="navbar-left">Mas IT</div>
         <div className="navbar-right">

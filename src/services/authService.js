@@ -14,6 +14,11 @@ export const register = async (data) => {
 
 export const login = async ({ username, password }) => {
   try {
+    localStorage.removeItem('adminToken')
+    localStorage.removeItem('adminUser')
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+
     const res = await API.post('/auth/login', { username, password });
 
     const { token, user } = res.data;
@@ -21,7 +26,7 @@ export const login = async ({ username, password }) => {
     // Simpan token dan user di localStorage
     if (token && user) {
       if( user.role === 'admin'){
-        localStorage.setItem('adminToken')
+        localStorage.setItem('adminToken',token)
         localStorage.setItem('adminUser', JSON.stringify(user))
       }else{
         localStorage.setItem('token', token)
@@ -40,14 +45,27 @@ export const login = async ({ username, password }) => {
 
 export const checkAuth = async () => {
   try {
-    const res = await API.get('/auth/check');
-    return { loggedIn: true, user: res.data.user };
-  } catch {
-    return { loggedIn: false };
+    const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+
+    if (!token) return { loggedIn: false };
+
+    const res = await API.get('/auth/check')
+    return {
+      loggedIn: true,
+      user: res.data.user
+    };
+  } catch (err) {
+    return {
+      loggedIn: false,
+      message: err.response?.data?.message || 'Autentikasi gagal',
+    };
   }
 };
 
+
 export const logout = async () => {
+  localStorage.removeItem('adminToken');
+  localStorage.removeItem('adminUser');
   localStorage.removeItem('token');
   localStorage.removeItem('user');
   await API.post('/auth/logout');

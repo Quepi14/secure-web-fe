@@ -13,7 +13,7 @@ export const deleteComment = async (id) => api.delete(`/comments/${id}`);
 
 export const submitComment = async (formData) => {
   try {
-    const response = await api.post('/comments', formData, {
+    const response = await api.post('/comments' , formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
